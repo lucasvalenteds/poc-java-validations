@@ -12,6 +12,7 @@
 
     <modules>
         <module>jakarta-validation</module>
+        <module>layered</module>
         <module>result</module>
         <module>validator</module>
     </modules>
