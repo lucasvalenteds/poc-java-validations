@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MainTest {
 
     @Test
-    public void creatingCustomerWithLastName() {
+    void creatingCustomerWithLastName() {
         final var result = CustomerId.of(UUID.fromString("15d5650e-82b3-4239-abac-de48e65e3492"))
             .flatMap(customerId -> FirstName.of("John")
                 .flatMap(firstName -> LastName.of("Smith")
@@ -30,7 +30,7 @@ class MainTest {
     }
 
     @Test
-    public void creatingCustomerWithoutLastName() {
+    void creatingCustomerWithoutLastName() {
         final var result = CustomerId.of(UUID.fromString("15d5650e-82b3-4239-abac-de48e65e3492"))
             .flatMap(customerId -> FirstName.of("John")
                 .flatMap(firstName -> Customer.of(customerId, firstName, null)));
@@ -52,7 +52,7 @@ class MainTest {
 
     @ParameterizedTest
     @MethodSource("invalidCustomerId")
-    public void handlingInvalidCustomerId(UUID customerId, String expectedExceptionMessage) {
+    void handlingInvalidCustomerId(UUID customerId, String expectedExceptionMessage) {
         final var result = CustomerId.of(customerId)
             .flatMap(id -> FirstName.of("John")
                 .flatMap(firstName -> Customer.of(id, firstName, null)));
@@ -71,7 +71,7 @@ class MainTest {
 
     @ParameterizedTest
     @MethodSource("invalidFirstName")
-    public void handlingInvalidFirstName(String firstName, String expectedExceptionMessage) {
+    void handlingInvalidFirstName(String firstName, String expectedExceptionMessage) {
         final var result = CustomerId.of(UUID.randomUUID())
             .flatMap(customerId -> FirstName.of(firstName)
                 .flatMap(name -> Customer.of(customerId, name, null)));
@@ -88,7 +88,7 @@ class MainTest {
 
     @ParameterizedTest
     @MethodSource("invalidLastName")
-    public void handlingInvalidLastName(String lastName, String expectedExceptionMessage) {
+    void handlingInvalidLastName(String lastName, String expectedExceptionMessage) {
         final var result = CustomerId.of(UUID.randomUUID())
             .flatMap(customerId -> FirstName.of("John")
                 .flatMap(firstName -> LastName.of(lastName)

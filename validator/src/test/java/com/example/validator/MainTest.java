@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MainTest {
 
     @Test
-    public void creatingCustomerWithLastName() {
+    void creatingCustomerWithLastName() {
         final var customer = new Customer(
             new CustomerId(UUID.fromString("15d5650e-82b3-4239-abac-de48e65e3492")),
             new FirstName("John"),
@@ -37,7 +37,7 @@ class MainTest {
     }
 
     @Test
-    public void creatingCustomerWithoutLastName() {
+    void creatingCustomerWithoutLastName() {
         final var customer = new Customer(
             new CustomerId(UUID.fromString("15d5650e-82b3-4239-abac-de48e65e3492")),
             new FirstName("John"),
@@ -64,7 +64,7 @@ class MainTest {
 
     @ParameterizedTest
     @MethodSource("invalidCustomerId")
-    public void handlingInvalidCustomerId(UUID customerId, String expectedExceptionMessage) {
+    void handlingInvalidCustomerId(UUID customerId, String expectedExceptionMessage) {
         final var customer = new Customer(
             new CustomerId(customerId),
             new FirstName("John"),
@@ -92,7 +92,7 @@ class MainTest {
 
     @ParameterizedTest
     @MethodSource("invalidFirstName")
-    public void handlingInvalidFirstName(String firstName, String expectedExceptionMessage) {
+    void handlingInvalidFirstName(String firstName, String expectedExceptionMessage) {
         final var customer = new Customer(
             new CustomerId(UUID.randomUUID()),
             new FirstName(firstName),
@@ -118,7 +118,7 @@ class MainTest {
 
     @ParameterizedTest
     @MethodSource("invalidLastName")
-    public void handlingInvalidLastName(String lastName, String expectedExceptionMessage) {
+    void handlingInvalidLastName(String lastName, String expectedExceptionMessage) {
         final var customer = new Customer(
             new CustomerId(UUID.randomUUID()),
             new FirstName("John"),
