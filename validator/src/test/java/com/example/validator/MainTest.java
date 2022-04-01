@@ -1,21 +1,20 @@
 package com.example.validator;
 
-import com.example.TestCases;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("Validator test cases")
-class MainTest implements TestCases {
+class MainTest {
 
     @Test
     public void creatingCustomerWithLastName() {
@@ -57,6 +56,12 @@ class MainTest implements TestCases {
         assertEquals("15d5650e-82b3-4239-abac-de48e65e3492", validCustomer.id().value().toString());
     }
 
+    static Stream<Arguments> invalidCustomerId() {
+        return Stream.of(
+            Arguments.of(null, "Customer ID must be an UUID")
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("invalidCustomerId")
     public void handlingInvalidCustomerId(UUID customerId, String expectedExceptionMessage) {
@@ -77,6 +82,14 @@ class MainTest implements TestCases {
         assertNull(exception.getCause());
     }
 
+    static Stream<Arguments> invalidFirstName() {
+        return Stream.of(
+            Arguments.of(null, "First name is required"),
+            Arguments.of("", "First name is too short"),
+            Arguments.of("a".repeat(31), "First name is too long")
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("invalidFirstName")
     public void handlingInvalidFirstName(String firstName, String expectedExceptionMessage) {
@@ -95,6 +108,12 @@ class MainTest implements TestCases {
 
         assertEquals(expectedExceptionMessage, exception.getMessage());
         assertNull(exception.getCause());
+    }
+
+    static Stream<Arguments> invalidLastName() {
+        return Stream.of(
+            Arguments.of("a".repeat(51), "Last name is too long")
+        );
     }
 
     @ParameterizedTest

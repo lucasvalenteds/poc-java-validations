@@ -1,21 +1,20 @@
-package com.example.beanvalidation;
+package com.example.jakarta;
 
-import com.example.TestCases;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Bean Validation test cases")
-class MainTest implements TestCases {
+class MainTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory()
         .getValidator();
@@ -48,6 +47,12 @@ class MainTest implements TestCases {
             .isEmpty();
     }
 
+    static Stream<Arguments> invalidCustomerId() {
+        return Stream.of(
+            Arguments.of(null, "Customer ID must be an UUID")
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("invalidCustomerId")
     public void handlingInvalidCustomerId(UUID customerId, String expectedExceptionMessage) {
@@ -65,6 +70,14 @@ class MainTest implements TestCases {
             .contains(expectedExceptionMessage);
     }
 
+    static Stream<Arguments> invalidFirstName() {
+        return Stream.of(
+            Arguments.of(null, "First name is required"),
+            Arguments.of("", "First name is too short"),
+            Arguments.of("a".repeat(31), "First name is too long")
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("invalidFirstName")
     public void handlingInvalidFirstName(String firstName, String expectedExceptionMessage) {
@@ -80,6 +93,12 @@ class MainTest implements TestCases {
             .isNotEmpty()
             .extracting(ConstraintViolation::getMessage)
             .contains(expectedExceptionMessage);
+    }
+
+    static Stream<Arguments> invalidLastName() {
+        return Stream.of(
+            Arguments.of("a".repeat(51), "Last name is too long")
+        );
     }
 
     @ParameterizedTest

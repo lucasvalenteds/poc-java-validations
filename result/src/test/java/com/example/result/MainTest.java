@@ -1,18 +1,17 @@
 package com.example.result;
 
-import com.example.TestCases;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("Result test cases")
-class MainTest implements TestCases {
+class MainTest {
 
     @Test
     public void creatingCustomerWithLastName() {
@@ -45,6 +44,12 @@ class MainTest implements TestCases {
         assertEquals("John", customer.fullName());
     }
 
+    static Stream<Arguments> invalidCustomerId() {
+        return Stream.of(
+            Arguments.of(null, "Customer ID must be an UUID")
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("invalidCustomerId")
     public void handlingInvalidCustomerId(UUID customerId, String expectedExceptionMessage) {
@@ -56,6 +61,14 @@ class MainTest implements TestCases {
         assertEquals(expectedExceptionMessage, result.exception().getMessage());
     }
 
+    static Stream<Arguments> invalidFirstName() {
+        return Stream.of(
+            Arguments.of(null, "First name is required"),
+            Arguments.of("", "First name is too short"),
+            Arguments.of("a".repeat(31), "First name is too long")
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("invalidFirstName")
     public void handlingInvalidFirstName(String firstName, String expectedExceptionMessage) {
@@ -65,6 +78,12 @@ class MainTest implements TestCases {
 
         assertEquals(Result.Failure.class, result.getClass());
         assertEquals(expectedExceptionMessage, result.exception().getMessage());
+    }
+
+    static Stream<Arguments> invalidLastName() {
+        return Stream.of(
+            Arguments.of("a".repeat(51), "Last name is too long")
+        );
     }
 
     @ParameterizedTest

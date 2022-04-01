@@ -1,4 +1,4 @@
-package com.example.beanvalidation;
+package com.example.jakarta;
 
 import jakarta.validation.Valid;
 
