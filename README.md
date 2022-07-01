@@ -15,3 +15,85 @@ JUnit.
 | Description   | Command          |
 |:--------------|:-----------------|
 | Run all tests | `./gradlew test` |
+
+## Preview
+
+`jakarta-validation`:
+
+```java
+@Test
+void creatingCustomerWithLastName() {
+    final var customer = new Customer(
+        new CustomerId(UUID.fromString("15d5650e-82b3-4239-abac-de48e65e3492")),
+        new FirstName("John"),
+        Optional.of(new LastName("Smith"))
+    );
+
+    final var violations = validator.validate(customer);
+
+    assertThat(violations)
+        .isEmpty();
+}
+```
+
+`layered`:
+
+```java
+@Test
+void creatingCustomerWithLastName() {
+    final var id = UUID.fromString("15d5650e-82b3-4239-abac-de48e65e3492");
+    final var firstName = "John";
+    final var lastName = "Smith";
+
+    final var validCustomer = customerService.create(id, firstName, lastName);
+
+    assertEquals(firstName, validCustomer.firstName().value());
+    assertEquals(lastName, validCustomer.lastName().orElseThrow().value());
+    assertEquals("John Smith", validCustomer.fullName());
+    assertEquals("15d5650e-82b3-4239-abac-de48e65e3492", validCustomer.id().value().toString());
+}
+```
+
+`result`:
+
+```java
+@Test
+void creatingCustomerWithLastName() {
+    final var result = CustomerId.of(UUID.fromString("15d5650e-82b3-4239-abac-de48e65e3492"))
+        .flatMap(customerId -> FirstName.of("John")
+        .flatMap(firstName -> LastName.of("Smith")
+        .flatMap(lastName -> Customer.of(customerId, firstName, lastName))));
+
+    assertEquals(Result.Success.class, result.getClass());
+
+    final var customer = result.value();
+    assertEquals("15d5650e-82b3-4239-abac-de48e65e3492", customer.id().value().toString());
+    assertEquals("John", customer.firstName().value());
+    assertEquals("Smith", customer.lastName().orElseThrow().value());
+    assertEquals("John Smith", customer.fullName());
+}
+```
+
+`validator`:
+
+```java
+@Test
+void creatingCustomerWithLastName() {
+    final var customer = new Customer(
+        new CustomerId(UUID.fromString("15d5650e-82b3-4239-abac-de48e65e3492")),
+        new FirstName("John"),
+        Optional.of(new LastName("Smith"))
+    );
+
+    final var validCustomer = CustomerValidator.customerId()
+        .and(CustomerValidator.firstName())
+        .and(CustomerValidator.lastName())
+        .apply(customer)
+        .<Customer>getOrElseThrow();
+
+    assertEquals("John", validCustomer.firstName().value());
+    assertEquals("Smith", validCustomer.lastName().orElseThrow().value());
+    assertEquals("John Smith", validCustomer.fullName());
+    assertEquals("15d5650e-82b3-4239-abac-de48e65e3492", validCustomer.id().value().toString());
+}
+```
